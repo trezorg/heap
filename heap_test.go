@@ -6,24 +6,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type item struct {
-	priority int
-}
-
-func (i item) Priority() int {
-	return i.priority
-}
-
-func TestHeap2FactorChilds(t *testing.T) {
-	h, _ := NewMinHeap(2)
+func TestHeap2FactorChildren(t *testing.T) {
+	h, _ := NewMinHeap[int](2)
 	require.Equal(t, []int{1, 2}, h.children(0))
 	require.Equal(t, []int{3, 4}, h.children(1))
 	require.Equal(t, []int{5, 6}, h.children(2))
 	require.Equal(t, []int{7, 8}, h.children(3))
 }
 
-func TestHeap3FactorChilds(t *testing.T) {
-	h, _ := NewMinHeap(3)
+func TestHeap3FactorChildren(t *testing.T) {
+	h, _ := NewMinHeap[int](3)
 	require.Equal(t, []int{1, 2, 3}, h.children(0))
 	require.Equal(t, []int{4, 5, 6}, h.children(1))
 	require.Equal(t, []int{7, 8, 9}, h.children(2))
@@ -31,7 +23,7 @@ func TestHeap3FactorChilds(t *testing.T) {
 }
 
 func TestHeap2FactorParent(t *testing.T) {
-	h, _ := NewMinHeap(2)
+	h, _ := NewMinHeap[int](2)
 	require.Equal(t, 1, h.parent(3))
 	require.Equal(t, 1, h.parent(4))
 	require.Equal(t, 2, h.parent(5))
@@ -43,7 +35,7 @@ func TestHeap2FactorParent(t *testing.T) {
 }
 
 func TestHeap3FactorParent(t *testing.T) {
-	h, _ := NewMinHeap(3)
+	h, _ := NewMinHeap[int](3)
 	require.Equal(t, 1, h.parent(4))
 	require.Equal(t, 1, h.parent(5))
 	require.Equal(t, 1, h.parent(6))
@@ -60,408 +52,504 @@ func TestHeap3FactorParent(t *testing.T) {
 }
 
 func TestHeap2Push(t *testing.T) {
-	h, _ := NewMinHeap(2)
+	h, _ := NewMinHeap[int](2)
 
-	h.Push(item{priority: 1})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 5})
+	h.Push(1)
+	h.Push(2)
+	h.Push(3)
+	h.Push(4)
+	h.Push(5)
 
-	var priorities []int
+	require.Equal(t, []int{1, 2, 3, 4, 5}, h.items)
 
-	for _, item := range h.items {
-		priorities = append(priorities, item.Priority())
-	}
+	h, _ = NewMinHeap[int](2)
 
-	require.Equal(t, []int{1, 2, 3, 4, 5}, priorities)
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
 
-	h, _ = NewMinHeap(2)
-
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 1})
-
-	priorities = priorities[:0]
-
-	for _, item := range h.items {
-		priorities = append(priorities, item.Priority())
-	}
-
-	require.Equal(t, []int{1, 2, 4, 5, 3}, priorities)
+	require.Equal(t, []int{1, 2, 4, 5, 3}, h.items)
 
 }
 
 func TestHeap3Push(t *testing.T) {
-	h, _ := NewMinHeap(3)
+	h, _ := NewMinHeap[int](3)
 
-	h.Push(item{priority: 1})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 10})
+	h.Push(1)
+	h.Push(2)
+	h.Push(3)
+	h.Push(4)
+	h.Push(5)
+	h.Push(6)
+	h.Push(7)
+	h.Push(8)
+	h.Push(9)
+	h.Push(10)
 
-	var priorities []int
+	require.Equal(t, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, h.items)
 
-	for _, item := range h.items {
-		priorities = append(priorities, item.Priority())
-	}
+	h, _ = NewMinHeap[int](3)
 
-	require.Equal(t, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, priorities)
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
 
-	h, _ = NewMinHeap(3)
+	require.Equal(t, 1, h.Pop())
+	require.Equal(t, 2, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 5, h.Pop())
+	require.Equal(t, 6, h.Pop())
+	require.Equal(t, 7, h.Pop())
+	require.Equal(t, 8, h.Pop())
+	require.Equal(t, 9, h.Pop())
+	require.Equal(t, 10, h.Pop())
 
-	h.Push(item{priority: 10})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 1})
+	h, _ = NewMinHeap[int](3)
 
-	require.Equal(t, 1, h.Pop().Priority())
-	require.Equal(t, 2, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 5, h.Pop().Priority())
-	require.Equal(t, 6, h.Pop().Priority())
-	require.Equal(t, 7, h.Pop().Priority())
-	require.Equal(t, 8, h.Pop().Priority())
-	require.Equal(t, 9, h.Pop().Priority())
-	require.Equal(t, 10, h.Pop().Priority())
+	h.Push(3)
+	h.Push(2)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(1)
+	h.Push(9)
+	h.Push(8)
+	h.Push(4)
+	h.Push(10)
 
-	h, _ = NewMinHeap(3)
-
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 10})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 1})
-
-	priorities = priorities[:0]
-
-	require.Equal(t, 1, h.Pop().Priority())
-	require.Equal(t, 2, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 5, h.Pop().Priority())
-	require.Equal(t, 6, h.Pop().Priority())
-	require.Equal(t, 7, h.Pop().Priority())
-	require.Equal(t, 8, h.Pop().Priority())
-	require.Equal(t, 9, h.Pop().Priority())
-	require.Equal(t, 10, h.Pop().Priority())
+	require.Equal(t, 1, h.Pop())
+	require.Equal(t, 2, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 5, h.Pop())
+	require.Equal(t, 6, h.Pop())
+	require.Equal(t, 7, h.Pop())
+	require.Equal(t, 8, h.Pop())
+	require.Equal(t, 9, h.Pop())
+	require.Equal(t, 10, h.Pop())
 
 }
 
 func TestMaxHeap3Push(t *testing.T) {
 
-	h, _ := NewMaxHeap(3)
+	h, _ := NewMaxHeap[int](3)
 
-	h.Push(item{priority: 10})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 1})
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
 
-	require.Equal(t, 10, h.Pop().Priority())
-	require.Equal(t, 9, h.Pop().Priority())
-	require.Equal(t, 8, h.Pop().Priority())
-	require.Equal(t, 7, h.Pop().Priority())
-	require.Equal(t, 6, h.Pop().Priority())
-	require.Equal(t, 5, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, 2, h.Pop().Priority())
-	require.Equal(t, 1, h.Pop().Priority())
+	require.Equal(t, 10, h.Pop())
+	require.Equal(t, 9, h.Pop())
+	require.Equal(t, 8, h.Pop())
+	require.Equal(t, 7, h.Pop())
+	require.Equal(t, 6, h.Pop())
+	require.Equal(t, 5, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, 2, h.Pop())
+	require.Equal(t, 1, h.Pop())
 
-	h, _ = NewMaxHeap(3)
+	h, _ = NewMaxHeap[int](3)
 
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 10})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 1})
+	h.Push(3)
+	h.Push(2)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(4)
+	h.Push(1)
 
-	require.Equal(t, 10, h.Pop().Priority())
-	require.Equal(t, 9, h.Pop().Priority())
-	require.Equal(t, 8, h.Pop().Priority())
-	require.Equal(t, 7, h.Pop().Priority())
-	require.Equal(t, 6, h.Pop().Priority())
-	require.Equal(t, 5, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, 2, h.Pop().Priority())
-	require.Equal(t, 1, h.Pop().Priority())
+	require.Equal(t, 10, h.Pop())
+	require.Equal(t, 9, h.Pop())
+	require.Equal(t, 8, h.Pop())
+	require.Equal(t, 7, h.Pop())
+	require.Equal(t, 6, h.Pop())
+	require.Equal(t, 5, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, 2, h.Pop())
+	require.Equal(t, 1, h.Pop())
 
 }
 
 func TestMaxHeap3Pick(t *testing.T) {
 
-	h, _ := NewMaxHeap(3)
+	h, _ := NewMaxHeap[int](3)
 
-	h.Push(item{priority: 10})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 1})
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
 
-	require.Equal(t, 10, h.pick().Priority())
+	require.Equal(t, 10, h.pick())
 
-	h, _ = NewMaxHeap(3)
+	h, _ = NewMaxHeap[int](3)
 
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 10})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 1})
+	h.Push(3)
+	h.Push(2)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(4)
+	h.Push(1)
 
-	require.Equal(t, 10, h.pick().Priority())
+	require.Equal(t, 10, h.pick())
 }
 
 func TestMaxHeap5Push(t *testing.T) {
 
-	h, _ := NewMaxHeap(5)
+	h, _ := NewMaxHeap[int](5)
 
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 10})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 1})
-	h.Push(item{priority: 11})
-	h.Push(item{priority: 12})
-	h.Push(item{priority: 100})
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 1})
+	h.Push(3)
+	h.Push(2)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(4)
+	h.Push(1)
+	h.Push(11)
+	h.Push(12)
+	h.Push(100)
+	h.Push(4)
+	h.Push(1)
 
-	require.Equal(t, 100, h.pick().Priority())
-	require.Equal(t, 100, h.Pop().Priority())
-	require.Equal(t, 12, h.Pop().Priority())
-	require.Equal(t, 11, h.Pop().Priority())
-	require.Equal(t, 10, h.Pop().Priority())
+	require.Equal(t, 100, h.pick())
+	require.Equal(t, 100, h.Pop())
+	require.Equal(t, 12, h.Pop())
+	require.Equal(t, 11, h.Pop())
+	require.Equal(t, 10, h.Pop())
 
 }
 
 func TestMaxHeap3Heapify(t *testing.T) {
 
-	h, _ := NewMaxHeap(3)
+	h, _ := NewMaxHeap[int](3)
 
-	h.Heapify(item{priority: 3}, item{priority: 4}, item{priority: 10}, item{priority: -1}, item{priority: 22})
+	h.Heapify(
+		3,
+		4,
+		10,
+		-1,
+		22,
+	)
 
-	require.Equal(t, 22, h.Pop().Priority())
-	require.Equal(t, 10, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, -1, h.Pop().Priority())
+	require.Equal(t, 22, h.Pop())
+	require.Equal(t, 10, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, -1, h.Pop())
+
+}
+
+func TestMaxHeap3HeapifyFloats(t *testing.T) {
+
+	h, _ := NewMaxHeap[float64](3)
+
+	h.Heapify(
+		3,
+		4,
+		10,
+		-1,
+		22,
+	)
+
+	require.Equal(t, 22.0, h.Pop())
+	require.Equal(t, 10.0, h.Pop())
+	require.Equal(t, 4.0, h.Pop())
+	require.Equal(t, 3.0, h.Pop())
+	require.Equal(t, -1.0, h.Pop())
+
+}
+func TestMaxHeap3HeapifyStrings(t *testing.T) {
+
+	h, _ := NewMaxHeap[string](3)
+
+	h.Heapify(
+		"3",
+		"4",
+		"5",
+		"1",
+		"2",
+	)
+
+	require.Equal(t, "5", h.Pop())
+	require.Equal(t, "4", h.Pop())
+	require.Equal(t, "3", h.Pop())
+	require.Equal(t, "2", h.Pop())
+	require.Equal(t, "1", h.Pop())
 
 }
 
 func TestMinHeap3Heapify(t *testing.T) {
 
-	h, _ := NewMinHeap(3)
+	h, _ := NewMinHeap[int](3)
 
-	h.Heapify(item{priority: 3}, item{priority: 4}, item{priority: 10}, item{priority: -1}, item{priority: 22})
+	h.Heapify(
+		3,
+		4,
+		10,
+		-1,
+		22,
+	)
 
 	require.Equal(t, 5, h.Size())
 
-	require.Equal(t, -1, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 10, h.Pop().Priority())
-	require.Equal(t, 22, h.Pop().Priority())
+	require.Equal(t, -1, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 10, h.Pop())
+	require.Equal(t, 22, h.Pop())
 
 }
 
 func TestMinHeap3GetFromEmpty(t *testing.T) {
-	h, _ := NewMinHeap(3)
-	require.Equal(t, nil, h.Pop())
+	h, _ := NewMinHeap[int](3)
+	require.Panics(t, func() { h.Pop() })
+}
+
+func TestEmptySize(t *testing.T) {
+	minH, _ := NewMinHeap[int](3)
+	require.True(t, minH.Empty())
+	require.Equal(t, 0, minH.Size())
+	maxH, _ := NewMaxHeap[int](3)
+	require.True(t, maxH.Empty())
+	require.Equal(t, 0, maxH.Size())
+	maxP, _ := NewMaxPQ[int](3)
+	require.True(t, maxP.Empty())
+	require.Equal(t, 0, maxP.Size())
+	minP, _ := NewMaxPQ[int](3)
+	require.True(t, minP.Empty())
+	require.Equal(t, 0, minP.Size())
 }
 
 func TestMaxPQ(t *testing.T) {
-	h, _ := NewMaxPQ(5)
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 1})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 10})
+	h, _ := NewMaxPQ[int](5)
+	h.Push(4)
+	h.Push(2)
+	h.Push(3)
+	h.Push(1)
+	h.Push(6)
+	h.Push(5)
+	h.Push(7)
+	h.Push(9)
+	h.Push(8)
+	h.Push(10)
 
-	require.Equal(t, 6, h.Pop().Priority())
-	require.Equal(t, 7, h.Pop().Priority())
-	require.Equal(t, 8, h.Pop().Priority())
-	require.Equal(t, 9, h.Pop().Priority())
-	require.Equal(t, 10, h.Pop().Priority())
-	require.Equal(t, nil, h.Pop())
+	require.Equal(t, 6, h.Pop())
+	require.Equal(t, 7, h.Pop())
+	require.Equal(t, 8, h.Pop())
+	require.Equal(t, 9, h.Pop())
+	require.Equal(t, 10, h.Pop())
+	require.Panics(t, func() { h.Pop() })
 
 }
 
 func TestMinPQ(t *testing.T) {
-	h, _ := NewMinPQ(5)
-	h.Push(item{priority: 4})
-	h.Push(item{priority: 2})
-	h.Push(item{priority: 3})
-	h.Push(item{priority: 1})
-	h.Push(item{priority: 6})
-	h.Push(item{priority: 5})
-	h.Push(item{priority: 7})
-	h.Push(item{priority: 9})
-	h.Push(item{priority: 8})
-	h.Push(item{priority: 10})
+	h, _ := NewMinPQ[int](5)
+	h.Push(4)
+	h.Push(2)
+	h.Push(3)
+	h.Push(1)
+	h.Push(6)
+	h.Push(5)
+	h.Push(7)
+	h.Push(9)
+	h.Push(8)
+	h.Push(10)
 
-	require.Equal(t, 5, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, 2, h.Pop().Priority())
-	require.Equal(t, 1, h.Pop().Priority())
-	require.Equal(t, nil, h.Pop())
+	require.Equal(t, 5, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, 2, h.Pop())
+	require.Equal(t, 1, h.Pop())
+	require.Panics(t, func() { h.Pop() })
 
 }
 
 func TestMinPQHeapify(t *testing.T) {
-	h, _ := NewMinPQ(5)
+	h, _ := NewMinPQ[int](5)
 	h.Heapify(
-		item{priority: 4},
-		item{priority: 2},
-		item{priority: 3},
-		item{priority: 1},
-		item{priority: 6},
-		item{priority: 5},
-		item{priority: 7},
-		item{priority: 9},
-		item{priority: 8},
-		item{priority: 10},
+		4,
+		2,
+		3,
+		1,
+		6,
+		5,
+		7,
+		9,
+		8,
+		10,
 	)
 
-	require.Equal(t, 5, h.Pop().Priority())
-	require.Equal(t, 4, h.Pop().Priority())
-	require.Equal(t, 3, h.Pop().Priority())
-	require.Equal(t, 2, h.Pop().Priority())
-	require.Equal(t, 1, h.Pop().Priority())
-	require.Equal(t, nil, h.Pop())
+	require.Equal(t, 5, h.Pop())
+	require.Equal(t, 4, h.Pop())
+	require.Equal(t, 3, h.Pop())
+	require.Equal(t, 2, h.Pop())
+	require.Equal(t, 1, h.Pop())
+	require.Panics(t, func() { h.Pop() })
 
 }
 
 func TestMaxPQHeapify(t *testing.T) {
-	h, _ := NewMaxPQ(5)
+	h, _ := NewMaxPQ[int](5)
 	h.Heapify(
-		item{priority: 4},
-		item{priority: 2},
-		item{priority: 3},
-		item{priority: 1},
-		item{priority: 6},
-		item{priority: 5},
-		item{priority: 7},
-		item{priority: 9},
-		item{priority: 8},
-		item{priority: 10},
+		4,
+		2,
+		3,
+		1,
+		6,
+		5,
+		7,
+		9,
+		8,
+		10,
 	)
 
-	require.Equal(t, 6, h.Pop().Priority())
-	require.Equal(t, 7, h.Pop().Priority())
-	require.Equal(t, 8, h.Pop().Priority())
-	require.Equal(t, 9, h.Pop().Priority())
-	require.Equal(t, 10, h.Pop().Priority())
-	require.Equal(t, nil, h.Pop())
+	require.Equal(t, 6, h.Pop())
+	require.Equal(t, 7, h.Pop())
+	require.Equal(t, 8, h.Pop())
+	require.Equal(t, 9, h.Pop())
+	require.Equal(t, 10, h.Pop())
+	require.Panics(t, func() { h.Pop() })
 
 }
 
 func TestMaxPQOrderedSlice(t *testing.T) {
-	h, _ := NewMaxPQ(5)
+	h, _ := NewMaxPQ[int](5)
 	h.Heapify(
-		item{priority: 4},
-		item{priority: 2},
-		item{priority: 3},
-		item{priority: 1},
-		item{priority: 6},
-		item{priority: 5},
-		item{priority: 7},
-		item{priority: 9},
-		item{priority: 8},
-		item{priority: 10},
+		4,
+		2,
+		3,
+		1,
+		6,
+		5,
+		7,
+		9,
+		8,
+		10,
 	)
 
-	var priorities []int
-	for _, item := range h.OrderedSlice() {
-		priorities = append(priorities, item.Priority())
-	}
-
-	require.Equal(t, []int{10, 9, 8, 7, 6}, priorities)
+	require.Equal(t, []int{10, 9, 8, 7, 6}, h.OrderedSlice())
 
 }
 
 func TestMinPQOrderedSlice(t *testing.T) {
-	h, _ := NewMinPQ(5)
+	h, _ := NewMinPQ[int](5)
 	h.Heapify(
-		item{priority: 4},
-		item{priority: 2},
-		item{priority: 3},
-		item{priority: 1},
-		item{priority: 6},
-		item{priority: 5},
-		item{priority: 7},
-		item{priority: 9},
-		item{priority: 8},
-		item{priority: 10},
+		4,
+		2,
+		3,
+		1,
+		6,
+		5,
+		7,
+		9,
+		8,
+		10,
 	)
 
-	var priorities []int
-	for _, item := range h.OrderedSlice() {
-		priorities = append(priorities, item.Priority())
-	}
-
-	require.Equal(t, []int{1, 2, 3, 4, 5}, priorities)
+	require.Equal(t, []int{1, 2, 3, 4, 5}, h.OrderedSlice())
 
 }
 
 func TestBlankMinPQOrderedSlice(t *testing.T) {
-	h, _ := NewMinPQ(5)
+	h, _ := NewMinPQ[int](5)
 	require.Len(t, h.OrderedSlice(), 0)
 }
 
 func TestBlankMaxPQOrderedSlice(t *testing.T) {
-	h, _ := NewMaxPQ(5)
+	h, _ := NewMaxPQ[int](5)
 	require.Len(t, h.OrderedSlice(), 0)
+}
+
+func TestMaxPQ3BaseTypePush(t *testing.T) {
+
+	type value int
+
+	h, _ := NewMaxPQ[value](5)
+
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
+
+	orderedSlice := h.OrderedSlice()
+
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
+
+	slice := h.Slice()
+
+	require.Equal(t, 5, len(orderedSlice))
+	require.Equal(t, 5, len(slice))
+	require.Equal(t, []value{10, 9, 8, 7, 6}, orderedSlice)
+	require.Equal(t, []value{6, 7, 8, 9, 10}, slice)
+}
+
+func TestMaxHeap3BaseTypePush(t *testing.T) {
+
+	type value int
+
+	h, _ := NewMaxHeap[value](2)
+
+	h.Push(10)
+	h.Push(9)
+	h.Push(8)
+	h.Push(7)
+	h.Push(6)
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
+
+	require.Equal(t, 10, h.Size())
+	slice := h.Slice()
+	require.Equal(t, []value{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}, slice)
 }
