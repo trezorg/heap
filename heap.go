@@ -18,7 +18,7 @@ type baseHeap[T constraints.Ordered] struct {
 	getChild func(items []T, idx []int) int
 }
 
-// baseCompaarableHeap comporable structure
+// baseComparableHeap comparable structure
 type baseComparableHeap[T Comparator[T]] struct {
 	items    []T
 	factor   int
