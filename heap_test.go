@@ -6,6 +6,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type Item int
+
+func (item Item) Less(compareItem Item) bool {
+	return item < compareItem
+}
+
 func TestHeap2FactorChildren(t *testing.T) {
 	h, _ := NewMinHeap[int](2)
 	require.Equal(t, []int{1, 2}, h.children(0))
@@ -71,6 +77,29 @@ func TestHeap2Push(t *testing.T) {
 	h.Push(1)
 
 	require.Equal(t, []int{1, 2, 4, 5, 3}, h.items)
+
+}
+
+func TestHeapComparable2Push(t *testing.T) {
+	h, _ := NewComparableMinHeap[Item](2)
+
+	h.Push(1)
+	h.Push(2)
+	h.Push(3)
+	h.Push(4)
+	h.Push(5)
+
+	require.Equal(t, []Item{1, 2, 3, 4, 5}, h.items)
+
+	h, _ = NewComparableMinHeap[Item](2)
+
+	h.Push(5)
+	h.Push(4)
+	h.Push(3)
+	h.Push(2)
+	h.Push(1)
+
+	require.Equal(t, []Item{1, 2, 4, 5, 3}, h.items)
 
 }
 
@@ -334,6 +363,28 @@ func TestMinHeap3Heapify(t *testing.T) {
 
 }
 
+func TestMinComparableHeap3Heapify(t *testing.T) {
+
+	h, _ := NewComparableMinHeap[Item](3)
+
+	h.Heapify(
+		3,
+		4,
+		10,
+		-1,
+		22,
+	)
+
+	require.Equal(t, 5, h.Size())
+
+	require.Equal(t, -1, int(h.Pop()))
+	require.Equal(t, 3, int(h.Pop()))
+	require.Equal(t, 4, int(h.Pop()))
+	require.Equal(t, 10, int(h.Pop()))
+	require.Equal(t, 22, int(h.Pop()))
+
+}
+
 func TestMinHeap3GetFromEmpty(t *testing.T) {
 	h, _ := NewMinHeap[int](3)
 	require.Panics(t, func() { h.Pop() })
@@ -481,6 +532,44 @@ func TestMinPQOrderedSlice(t *testing.T) {
 	)
 
 	require.Equal(t, []int{1, 2, 3, 4, 5}, h.OrderedSlice())
+
+}
+
+func TestMinComparablePQOrderedSlice(t *testing.T) {
+	h, _ := NewMinComparablePQ[Item](5)
+	h.Heapify(
+		4,
+		2,
+		3,
+		1,
+		6,
+		5,
+		7,
+		9,
+		8,
+		10,
+	)
+
+	require.Equal(t, []Item{1, 2, 3, 4, 5}, h.OrderedSlice())
+
+}
+
+func TestMaxComparablePQOrderedSlice(t *testing.T) {
+	h, _ := NewMaxComparablePQ[Item](5)
+	h.Heapify(
+		4,
+		2,
+		3,
+		1,
+		6,
+		5,
+		7,
+		9,
+		8,
+		10,
+	)
+
+	require.Equal(t, []Item{10, 9, 8, 7, 6}, h.OrderedSlice())
 
 }
 
