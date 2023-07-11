@@ -80,8 +80,8 @@ func TestHeap2Push(t *testing.T) {
 
 }
 
-func TestHeapComparable2Push(t *testing.T) {
-	h, _ := NewComparableMinHeap[Item](2)
+func TestHeapComparator2Push(t *testing.T) {
+	h, _ := NewComparatorMinHeap[Item](2)
 
 	h.Push(1)
 	h.Push(2)
@@ -91,7 +91,7 @@ func TestHeapComparable2Push(t *testing.T) {
 
 	require.Equal(t, []Item{1, 2, 3, 4, 5}, h.items)
 
-	h, _ = NewComparableMinHeap[Item](2)
+	h, _ = NewComparatorMinHeap[Item](2)
 
 	h.Push(5)
 	h.Push(4)
@@ -363,9 +363,9 @@ func TestMinHeap3Heapify(t *testing.T) {
 
 }
 
-func TestMinComparableHeap3Heapify(t *testing.T) {
+func TestMinComparatorHeap3Heapify(t *testing.T) {
 
-	h, _ := NewComparableMinHeap[Item](3)
+	h, _ := NewComparatorMinHeap[Item](3)
 
 	h.Heapify(
 		3,
@@ -535,8 +535,8 @@ func TestMinPQOrderedSlice(t *testing.T) {
 
 }
 
-func TestMinComparablePQOrderedSlice(t *testing.T) {
-	h, _ := NewMinComparablePQ[Item](5)
+func TestMinComparatorPQOrderedSlice(t *testing.T) {
+	h, _ := NewMinComparatorPQ[Item](5)
 	h.Heapify(
 		4,
 		2,
@@ -554,8 +554,8 @@ func TestMinComparablePQOrderedSlice(t *testing.T) {
 
 }
 
-func TestMaxComparablePQOrderedSlice(t *testing.T) {
-	h, _ := NewMaxComparablePQ[Item](5)
+func TestMaxComparatorPQOrderedSlice(t *testing.T) {
+	h, _ := NewMaxComparatorPQ[Item](5)
 	h.Heapify(
 		4,
 		2,
