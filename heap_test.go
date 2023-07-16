@@ -13,7 +13,7 @@ func (item Item) Less(compareItem Item) bool {
 }
 
 func TestHeap2FactorChildren(t *testing.T) {
-	h, _ := NewMinHeap[int](2)
+	h, _ := NewOrderedMinHeap[int](2)
 	require.Equal(t, []int{1, 2}, h.children(0))
 	require.Equal(t, []int{3, 4}, h.children(1))
 	require.Equal(t, []int{5, 6}, h.children(2))
@@ -21,7 +21,7 @@ func TestHeap2FactorChildren(t *testing.T) {
 }
 
 func TestHeap3FactorChildren(t *testing.T) {
-	h, _ := NewMinHeap[int](3)
+	h, _ := NewOrderedMinHeap[int](3)
 	require.Equal(t, []int{1, 2, 3}, h.children(0))
 	require.Equal(t, []int{4, 5, 6}, h.children(1))
 	require.Equal(t, []int{7, 8, 9}, h.children(2))
@@ -29,7 +29,7 @@ func TestHeap3FactorChildren(t *testing.T) {
 }
 
 func TestHeap2FactorParent(t *testing.T) {
-	h, _ := NewMinHeap[int](2)
+	h, _ := NewOrderedMinHeap[int](2)
 	require.Equal(t, 1, h.parent(3))
 	require.Equal(t, 1, h.parent(4))
 	require.Equal(t, 2, h.parent(5))
@@ -41,7 +41,7 @@ func TestHeap2FactorParent(t *testing.T) {
 }
 
 func TestHeap3FactorParent(t *testing.T) {
-	h, _ := NewMinHeap[int](3)
+	h, _ := NewOrderedMinHeap[int](3)
 	require.Equal(t, 1, h.parent(4))
 	require.Equal(t, 1, h.parent(5))
 	require.Equal(t, 1, h.parent(6))
@@ -58,7 +58,7 @@ func TestHeap3FactorParent(t *testing.T) {
 }
 
 func TestHeap2Push(t *testing.T) {
-	h, _ := NewMinHeap[int](2)
+	h, _ := NewOrderedMinHeap[int](2)
 
 	h.Push(1)
 	h.Push(2)
@@ -68,7 +68,7 @@ func TestHeap2Push(t *testing.T) {
 
 	require.Equal(t, []int{1, 2, 3, 4, 5}, h.items)
 
-	h, _ = NewMinHeap[int](2)
+	h, _ = NewOrderedMinHeap[int](2)
 
 	h.Push(5)
 	h.Push(4)
@@ -104,7 +104,7 @@ func TestHeapComparator2Push(t *testing.T) {
 }
 
 func TestHeap3Push(t *testing.T) {
-	h, _ := NewMinHeap[int](3)
+	h, _ := NewOrderedMinHeap[int](3)
 
 	h.Push(1)
 	h.Push(2)
@@ -119,7 +119,7 @@ func TestHeap3Push(t *testing.T) {
 
 	require.Equal(t, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, h.items)
 
-	h, _ = NewMinHeap[int](3)
+	h, _ = NewOrderedMinHeap[int](3)
 
 	h.Push(10)
 	h.Push(9)
@@ -143,7 +143,7 @@ func TestHeap3Push(t *testing.T) {
 	require.Equal(t, 9, h.Pop())
 	require.Equal(t, 10, h.Pop())
 
-	h, _ = NewMinHeap[int](3)
+	h, _ = NewOrderedMinHeap[int](3)
 
 	h.Push(3)
 	h.Push(2)
@@ -171,7 +171,7 @@ func TestHeap3Push(t *testing.T) {
 
 func TestMaxHeap3Push(t *testing.T) {
 
-	h, _ := NewMaxHeap[int](3)
+	h, _ := NewOrderedMaxHeap[int](3)
 
 	h.Push(10)
 	h.Push(9)
@@ -195,7 +195,7 @@ func TestMaxHeap3Push(t *testing.T) {
 	require.Equal(t, 2, h.Pop())
 	require.Equal(t, 1, h.Pop())
 
-	h, _ = NewMaxHeap[int](3)
+	h, _ = NewOrderedMaxHeap[int](3)
 
 	h.Push(3)
 	h.Push(2)
@@ -223,7 +223,7 @@ func TestMaxHeap3Push(t *testing.T) {
 
 func TestMaxHeap3Pick(t *testing.T) {
 
-	h, _ := NewMaxHeap[int](3)
+	h, _ := NewOrderedMaxHeap[int](3)
 
 	h.Push(10)
 	h.Push(9)
@@ -238,7 +238,7 @@ func TestMaxHeap3Pick(t *testing.T) {
 
 	require.Equal(t, 10, h.pick())
 
-	h, _ = NewMaxHeap[int](3)
+	h, _ = NewOrderedMaxHeap[int](3)
 
 	h.Push(3)
 	h.Push(2)
@@ -256,7 +256,7 @@ func TestMaxHeap3Pick(t *testing.T) {
 
 func TestMaxHeap5Push(t *testing.T) {
 
-	h, _ := NewMaxHeap[int](5)
+	h, _ := NewOrderedMaxHeap[int](5)
 
 	h.Push(3)
 	h.Push(2)
@@ -284,7 +284,7 @@ func TestMaxHeap5Push(t *testing.T) {
 
 func TestMaxHeap3Heapify(t *testing.T) {
 
-	h, _ := NewMaxHeap[int](3)
+	h, _ := NewOrderedMaxHeap[int](3)
 
 	h.Heapify(
 		3,
@@ -304,7 +304,7 @@ func TestMaxHeap3Heapify(t *testing.T) {
 
 func TestMaxHeap3HeapifyFloats(t *testing.T) {
 
-	h, _ := NewMaxHeap[float64](3)
+	h, _ := NewOrderedMaxHeap[float64](3)
 
 	h.Heapify(
 		3,
@@ -323,7 +323,7 @@ func TestMaxHeap3HeapifyFloats(t *testing.T) {
 }
 func TestMaxHeap3HeapifyStrings(t *testing.T) {
 
-	h, _ := NewMaxHeap[string](3)
+	h, _ := NewOrderedMaxHeap[string](3)
 
 	h.Heapify(
 		"3",
@@ -343,7 +343,7 @@ func TestMaxHeap3HeapifyStrings(t *testing.T) {
 
 func TestMinHeap3Heapify(t *testing.T) {
 
-	h, _ := NewMinHeap[int](3)
+	h, _ := NewOrderedMinHeap[int](3)
 
 	h.Heapify(
 		3,
@@ -386,15 +386,15 @@ func TestMinComparatorHeap3Heapify(t *testing.T) {
 }
 
 func TestMinHeap3GetFromEmpty(t *testing.T) {
-	h, _ := NewMinHeap[int](3)
+	h, _ := NewOrderedMinHeap[int](3)
 	require.Panics(t, func() { h.Pop() })
 }
 
 func TestEmptySize(t *testing.T) {
-	minH, _ := NewMinHeap[int](3)
+	minH, _ := NewOrderedMinHeap[int](3)
 	require.True(t, minH.Empty())
 	require.Equal(t, 0, minH.Size())
-	maxH, _ := NewMaxHeap[int](3)
+	maxH, _ := NewOrderedMaxHeap[int](3)
 	require.True(t, maxH.Empty())
 	require.Equal(t, 0, maxH.Size())
 	maxP, _ := NewMaxPQ[int](3)
@@ -428,7 +428,7 @@ func TestMaxPQ(t *testing.T) {
 }
 
 func TestMinPQ(t *testing.T) {
-	h, _ := NewMinPQ[int](5)
+	h, _ := NewOrderedMinPQ[int](5)
 	h.Push(4)
 	h.Push(2)
 	h.Push(3)
@@ -450,7 +450,7 @@ func TestMinPQ(t *testing.T) {
 }
 
 func TestMinPQHeapify(t *testing.T) {
-	h, _ := NewMinPQ[int](5)
+	h, _ := NewOrderedMinPQ[int](5)
 	h.Heapify(
 		4,
 		2,
@@ -517,7 +517,7 @@ func TestMaxPQOrderedSlice(t *testing.T) {
 }
 
 func TestMinPQOrderedSlice(t *testing.T) {
-	h, _ := NewMinPQ[int](5)
+	h, _ := NewOrderedMinPQ[int](5)
 	h.Heapify(
 		4,
 		2,
@@ -574,7 +574,7 @@ func TestMaxComparatorPQOrderedSlice(t *testing.T) {
 }
 
 func TestBlankMinPQOrderedSlice(t *testing.T) {
-	h, _ := NewMinPQ[int](5)
+	h, _ := NewOrderedMinPQ[int](5)
 	require.Len(t, h.OrderedSlice(), 0)
 }
 
@@ -625,7 +625,7 @@ func TestMaxHeap3BaseTypePush(t *testing.T) {
 
 	type value int
 
-	h, _ := NewMaxHeap[value](2)
+	h, _ := NewOrderedMaxHeap[value](2)
 
 	h.Push(10)
 	h.Push(9)

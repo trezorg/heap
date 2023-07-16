@@ -10,15 +10,15 @@ type Comparator[T any] interface {
 	Less(T) bool
 }
 
-// baseHeap structure
-type baseHeap[T constraints.Ordered] struct {
+// baseOrderedHeap heap structure with values based on Ordered generic constraint
+type baseOrderedHeap[T constraints.Ordered] struct {
 	items    []T
 	factor   int
 	check    func(item1 T, item2 T) bool
 	getChild func(items []T, idx []int) int
 }
 
-// baseComparatorHeap comparable structure
+// baseComparatorHeap heap structure with values based on Comparator interface
 type baseComparatorHeap[T Comparator[T]] struct {
 	items    []T
 	factor   int
@@ -26,9 +26,9 @@ type baseComparatorHeap[T Comparator[T]] struct {
 	getChild func(items []T, idx []int) int
 }
 
-// MinHeap is heap that returns element with min priority
-type MinHeap[T constraints.Ordered] struct {
-	baseHeap[T]
+// MinOrderedHeap is heap that returns element with min priority
+type MinOrderedHeap[T constraints.Ordered] struct {
+	baseOrderedHeap[T]
 }
 
 // MinComparatorHeap is heap that returns element with min priority
@@ -38,29 +38,29 @@ type MinComparatorHeap[T Comparator[T]] struct {
 
 // MaxHeap is heap that returns element with max priority
 type MaxHeap[T constraints.Ordered] struct {
-	baseHeap[T]
+	baseOrderedHeap[T]
 }
 
-// MaxComparatorHeap is heap that returns element with min priority
+// MaxComparatorHeap is heap that returns element with max priority
 type MaxComparatorHeap[T Comparator[T]] struct {
 	baseComparatorHeap[T]
 }
 
-// MaxPQ is maximum bounded priority queue
-type MaxPQ[T constraints.Ordered] struct {
-	baseHeap[T]
+// MaxOrderedPQ is maximum bounded priority queue based on Ordered generic constraint
+type MaxOrderedPQ[T constraints.Ordered] struct {
+	baseOrderedHeap[T]
 	size int
 }
 
-// MaxComparatorPQ is maximum bounded priority queue
+// MaxComparatorPQ is maximum bounded priority queue based on Comparator interface
 type MaxComparatorPQ[T Comparator[T]] struct {
 	baseComparatorHeap[T]
 	size int
 }
 
-// MinPQ is minimum bounded priority queue
-type MinPQ[T constraints.Ordered] struct {
-	baseHeap[T]
+// MinOrderedPQ is minimum bounded priority queue
+type MinOrderedPQ[T constraints.Ordered] struct {
+	baseOrderedHeap[T]
 	size int
 }
 
@@ -70,15 +70,16 @@ type MinComparatorPQ[T Comparator[T]] struct {
 	size int
 }
 
-func newHeap[T constraints.Ordered](factor int,
+func newOrderedHeap[T constraints.Ordered](
+	factor int,
 	check func(item1 T, item2 T) bool,
 	getChild func(items []T, idx []int) int,
-) (baseHeap[T], error) {
+) (baseOrderedHeap[T], error) {
 	if factor < 2 {
-		return baseHeap[T]{}, fmt.Errorf("wrong value for factor: %d. Cannot be less than 2", factor)
+		return baseOrderedHeap[T]{}, fmt.Errorf("wrong value for factor: %d. Cannot be less than 2", factor)
 	}
 
-	return baseHeap[T]{
+	return baseOrderedHeap[T]{
 		items:    make([]T, 0),
 		factor:   factor,
 		check:    check,
@@ -86,7 +87,8 @@ func newHeap[T constraints.Ordered](factor int,
 	}, nil
 }
 
-func newComparatorHeap[T Comparator[T]](factor int,
+func newComparatorHeap[T Comparator[T]](
+	factor int,
 	check func(item1 T, item2 T) bool,
 	getChild func(items []T, idx []int) int,
 ) (baseComparatorHeap[T], error) {
@@ -102,27 +104,27 @@ func newComparatorHeap[T Comparator[T]](factor int,
 	}, nil
 }
 
-// NewMinHeap heap constructor
-func NewMinHeap[T constraints.Ordered](factor int) (MinHeap[T], error) {
-	baseHeap, err := newHeap(factor, minCheck[T], getMinChild[T])
+// NewOrderedMinHeap heap constructor
+func NewOrderedMinHeap[T constraints.Ordered](factor int) (MinOrderedHeap[T], error) {
+	baseHeap, err := newOrderedHeap(factor, minCheck[T], getMinChild[T])
 	if err != nil {
-		return MinHeap[T]{}, err
+		return MinOrderedHeap[T]{}, err
 	}
-	return MinHeap[T]{baseHeap}, nil
+	return MinOrderedHeap[T]{baseHeap}, nil
 }
 
 // NewComparatorMinHeap heap constructor
 func NewComparatorMinHeap[T Comparator[T]](factor int) (MinComparatorHeap[T], error) {
-	baseHeap, err := newComparatorHeap(factor, minComporableCheck[T], getComparatorMinChild[T])
+	baseHeap, err := newComparatorHeap(factor, minComparatorCheck[T], getComparatorMinChild[T])
 	if err != nil {
 		return MinComparatorHeap[T]{}, err
 	}
 	return MinComparatorHeap[T]{baseHeap}, nil
 }
 
-// NewMaxHeap heap constructor
-func NewMaxHeap[T constraints.Ordered](factor int) (MaxHeap[T], error) {
-	baseHeap, err := newHeap(factor, maxCheck[T], getMaxChild[T])
+// NewOrderedMaxHeap heap constructor
+func NewOrderedMaxHeap[T constraints.Ordered](factor int) (MaxHeap[T], error) {
+	baseHeap, err := newOrderedHeap(factor, maxCheck[T], getMaxChild[T])
 	if err != nil {
 		return MaxHeap[T]{}, err
 	}
@@ -131,7 +133,7 @@ func NewMaxHeap[T constraints.Ordered](factor int) (MaxHeap[T], error) {
 
 // NewComparatorMaxHeap heap constructor
 func NewComparatorMaxHeap[T Comparator[T]](factor int) (MaxComparatorHeap[T], error) {
-	baseHeap, err := newComparatorHeap(factor, maxComporableCheck[T], getComparatorMaxChild[T])
+	baseHeap, err := newComparatorHeap(factor, maxComparatorCheck[T], getComparatorMaxChild[T])
 	if err != nil {
 		return MaxComparatorHeap[T]{}, err
 	}
@@ -139,35 +141,35 @@ func NewComparatorMaxHeap[T Comparator[T]](factor int) (MaxComparatorHeap[T], er
 }
 
 // NewMaxPQ creates maximum priority Queue
-func NewMaxPQ[T constraints.Ordered](size int) (MaxPQ[T], error) {
-	baseHeap, err := newHeap(size, minCheck[T], getMinChild[T])
+func NewMaxPQ[T constraints.Ordered](size int) (MaxOrderedPQ[T], error) {
+	baseHeap, err := newOrderedHeap(size, minCheck[T], getMinChild[T])
 	if err != nil {
-		return MaxPQ[T]{}, err
+		return MaxOrderedPQ[T]{}, err
 	}
-	return MaxPQ[T]{baseHeap: baseHeap, size: size}, nil
+	return MaxOrderedPQ[T]{baseOrderedHeap: baseHeap, size: size}, nil
 }
 
 // NewMaxComparatorPQ creates maximum priority Queue
 func NewMaxComparatorPQ[T Comparator[T]](size int) (MaxComparatorPQ[T], error) {
-	baseHeap, err := newComparatorHeap(size, minComporableCheck[T], getComparatorMinChild[T])
+	baseHeap, err := newComparatorHeap(size, minComparatorCheck[T], getComparatorMinChild[T])
 	if err != nil {
 		return MaxComparatorPQ[T]{}, err
 	}
 	return MaxComparatorPQ[T]{baseComparatorHeap: baseHeap, size: size}, nil
 }
 
-// NewMinPQ creates minimum priority Queue
-func NewMinPQ[T constraints.Ordered](size int) (MinPQ[T], error) {
-	baseHeap, err := newHeap(size, maxCheck[T], getMaxChild[T])
+// NewOrderedMinPQ creates minimum priority Queue
+func NewOrderedMinPQ[T constraints.Ordered](size int) (MinOrderedPQ[T], error) {
+	baseHeap, err := newOrderedHeap(size, maxCheck[T], getMaxChild[T])
 	if err != nil {
-		return MinPQ[T]{}, err
+		return MinOrderedPQ[T]{}, err
 	}
-	return MinPQ[T]{baseHeap: baseHeap, size: size}, nil
+	return MinOrderedPQ[T]{baseOrderedHeap: baseHeap, size: size}, nil
 }
 
 // NewComparatorMinPQ creates maximum priority Queue
 func NewMinComparatorPQ[T Comparator[T]](size int) (MinComparatorPQ[T], error) {
-	baseHeap, err := newComparatorHeap(size, maxComporableCheck[T], getComparatorMaxChild[T])
+	baseHeap, err := newComparatorHeap(size, maxComparatorCheck[T], getComparatorMaxChild[T])
 	if err != nil {
 		return MinComparatorPQ[T]{}, err
 	}
@@ -178,7 +180,7 @@ func minCheck[T constraints.Ordered](item1 T, item2 T) bool {
 	return item1 < item2
 }
 
-func minComporableCheck[T Comparator[T]](item1 T, item2 T) bool {
+func minComparatorCheck[T Comparator[T]](item1 T, item2 T) bool {
 	return item1.Less(item2)
 }
 
@@ -186,79 +188,73 @@ func maxCheck[T constraints.Ordered](item1 T, item2 T) bool {
 	return item1 > item2
 }
 
-func maxComporableCheck[T Comparator[T]](item1 T, item2 T) bool {
+func maxComparatorCheck[T Comparator[T]](item1 T, item2 T) bool {
 	return item2.Less(item1)
 }
 
-func checkMinMaxIndex[T constraints.Ordered](items []T, indexes []int, check func(item1 T, item2 T) bool) int {
-	if len(items) == 0 {
+func checkOrderedMinMaxIndex[T constraints.Ordered](items []T, indexes []int, check func(item1 T, item2 T) bool) int {
+	if len(items) == 0 || len(indexes) == 0 {
 		return -1
 	}
-	var aliveIdx []int
-	for i := 0; i < len(indexes); i++ {
-		if indexes[i] < len(items) {
-			aliveIdx = append(aliveIdx, indexes[i])
+	out := indexes[0]
+	if out >= len(items) {
+		return -1
+	}
+	res := items[out]
+	for i := 1; i < len(indexes); i++ {
+		idx := indexes[i]
+		if idx >= len(items) {
+			continue
 		}
-	}
-	if len(aliveIdx) == 0 {
-		return -1
-	}
-
-	res := items[aliveIdx[0]]
-	out := aliveIdx[0]
-	for i := 1; i < len(aliveIdx); i++ {
-		item := items[aliveIdx[i]]
+		item := items[idx]
 		if check(item, res) {
 			res = item
-			out = aliveIdx[i]
+			out = idx
 		}
 	}
 	return out
 }
 
-func checkComporableMinMaxIndex[T Comparator[T]](items []T, indexes []int, check func(item1 T, item2 T) bool) int {
-	if len(items) == 0 {
+func checkComparatorMinMaxIndex[T Comparator[T]](items []T, indexes []int, check func(item1 T, item2 T) bool) int {
+	if len(items) == 0 || len(indexes) == 0 {
 		return -1
 	}
-	var aliveIdx []int
-	for i := 0; i < len(indexes); i++ {
-		if indexes[i] < len(items) {
-			aliveIdx = append(aliveIdx, indexes[i])
+	out := indexes[0]
+	if out >= len(items) {
+		return -1
+	}
+	res := items[out]
+	for i := 1; i < len(indexes); i++ {
+		idx := indexes[i]
+		if idx >= len(items) {
+			continue
 		}
-	}
-	if len(aliveIdx) == 0 {
-		return -1
-	}
-
-	res := items[aliveIdx[0]]
-	out := aliveIdx[0]
-	for i := 1; i < len(aliveIdx); i++ {
-		item := items[aliveIdx[i]]
+		item := items[idx]
 		if check(item, res) {
 			res = item
-			out = aliveIdx[i]
+			out = idx
 		}
 	}
 	return out
 }
 
 func getMinChild[T constraints.Ordered](items []T, idx []int) int {
-	return checkMinMaxIndex(items, idx, minCheck[T])
+	return checkOrderedMinMaxIndex(items, idx, minCheck[T])
 }
 
 func getComparatorMinChild[T Comparator[T]](items []T, idx []int) int {
-	return checkComporableMinMaxIndex(items, idx, minComporableCheck[T])
+	return checkComparatorMinMaxIndex(items, idx, minComparatorCheck[T])
 }
 
 func getMaxChild[T constraints.Ordered](items []T, idx []int) int {
-	return checkMinMaxIndex(items, idx, maxCheck[T])
+	return checkOrderedMinMaxIndex(items, idx, maxCheck[T])
 }
 
 func getComparatorMaxChild[T Comparator[T]](items []T, idx []int) int {
-	return checkComporableMinMaxIndex(items, idx, maxComporableCheck[T])
+	return checkComparatorMinMaxIndex(items, idx, maxComparatorCheck[T])
 }
 
-func (h *baseHeap[T]) children(idx int) []int {
+func (h *baseOrderedHeap[T]) children(idx int) []int {
 	var res []int
 	for i := 0; i < h.factor; i++ {
 		child := (idx * h.factor) + i + 1
@@ -276,7 +272,7 @@ func (h *baseComparatorHeap[T]) children(idx int) []int {
 	return res
 }
 
-func (h *baseHeap[T]) parent(idx int) int {
+func (h *baseOrderedHeap[T]) parent(idx int) int {
 	rest, div := idx%h.factor, idx/h.factor
 	if rest == 0 {
 		div--
@@ -298,7 +294,7 @@ func (h *baseComparatorHeap[T]) parent(idx int) int {
 	return div
 }
 
-func (h *baseHeap[T]) up(idx int) {
+func (h *baseOrderedHeap[T]) up(idx int) {
 	item := h.items[idx]
 	for idx >= 0 {
 		parent := h.parent(idx)
@@ -328,7 +324,7 @@ func (h *baseComparatorHeap[T]) up(idx int) {
 	}
 }
 
-func (h *baseHeap[T]) push(item T) {
+func (h *baseOrderedHeap[T]) push(item T) {
 	h.items = append(h.items, item)
 	h.up(len(h.items) - 1)
 }
@@ -338,7 +334,7 @@ func (h *baseComparatorHeap[T]) push(item T) {
 	h.up(len(h.items) - 1)
 }
 
-func (h *baseHeap[T]) heapify(items ...T) {
+func (h *baseOrderedHeap[T]) heapify(items ...T) {
 	h.items = items
 	firstParent := (len(items) - 1) / h.factor
 	for i := firstParent; i >= 0; i-- {
@@ -354,7 +350,7 @@ func (h *baseComparatorHeap[T]) heapify(items ...T) {
 	}
 }
 
-func (h *baseHeap[T]) pick() T {
+func (h *baseOrderedHeap[T]) pick() T {
 	if h.empty() {
 		panic("empty base heap")
 	}
@@ -368,7 +364,7 @@ func (h *baseComparatorHeap[T]) pick() T {
 	return h.items[0]
 }
 
-func (h *baseHeap[T]) empty() bool {
+func (h *baseOrderedHeap[T]) empty() bool {
 	return len(h.items) == 0
 }
 
@@ -376,7 +372,7 @@ func (h *baseComparatorHeap[T]) empty() bool {
 	return len(h.items) == 0
 }
 
-func (h *baseHeap[T]) len() int {
+func (h *baseOrderedHeap[T]) len() int {
 	return len(h.items)
 }
 
@@ -384,7 +380,7 @@ func (h *baseComparatorHeap[T]) len() int {
 	return len(h.items)
 }
 
-func (h *baseHeap[T]) pop() T {
+func (h *baseOrderedHeap[T]) pop() T {
 	if h.empty() {
 		panic("empty base heap")
 	}
@@ -406,7 +402,7 @@ func (h *baseComparatorHeap[T]) pop() T {
 	return item
 }
 
-func (h *baseHeap[T]) down(idx int) {
+func (h *baseOrderedHeap[T]) down(idx int) {
 	if len(h.items) == 0 {
 		return
 	}
@@ -451,7 +447,7 @@ func (h *baseComparatorHeap[T]) down(idx int) {
 }
 
 // Push adds item into heap
-func (h *MinHeap[T]) Push(item T) {
+func (h *MinOrderedHeap[T]) Push(item T) {
 	h.push(item)
 }
 
@@ -471,7 +467,7 @@ func (h *MaxComparatorHeap[T]) Push(item T) {
 }
 
 // Push adds item into priority queue
-func (h *MinPQ[T]) Push(item T) {
+func (h *MinOrderedPQ[T]) Push(item T) {
 	if h.len() < h.size {
 		h.push(item)
 		return
@@ -497,7 +493,7 @@ func (h *MinComparatorPQ[T]) Push(item T) {
 }
 
 // Push adds item into priority queue
-func (h *MaxPQ[T]) Push(item T) {
+func (h *MaxOrderedPQ[T]) Push(item T) {
 	if h.len() < h.size {
 		h.push(item)
 		return
@@ -523,7 +519,7 @@ func (h *MaxComparatorPQ[T]) Push(item T) {
 }
 
 // Pop returns and deletes min value
-func (h *MinHeap[T]) Pop() T {
+func (h *MinOrderedHeap[T]) Pop() T {
 	return h.pop()
 }
 
@@ -543,7 +539,7 @@ func (h *MaxComparatorHeap[T]) Pop() T {
 }
 
 // Pop returns and deletes min value
-func (h *MinPQ[T]) Pop() T {
+func (h *MinOrderedPQ[T]) Pop() T {
 	return h.pop()
 }
 
@@ -553,7 +549,7 @@ func (h *MinComparatorPQ[T]) Pop() T {
 }
 
 // Pop returns and deletes max value
-func (h *MaxPQ[T]) Pop() T {
+func (h *MaxOrderedPQ[T]) Pop() T {
 	return h.pop()
 }
 
@@ -563,7 +559,7 @@ func (h *MaxComparatorPQ[T]) Pop() T {
 }
 
 // Pick returns min value
-func (h *MinHeap[T]) Pick() T {
+func (h *MinOrderedHeap[T]) Pick() T {
 	return h.pick()
 }
 
@@ -583,7 +579,7 @@ func (h *MaxComparatorHeap[T]) Pick() T {
 }
 
 // Pick returns min value
-func (h *MinPQ[T]) Pick() T {
+func (h *MinOrderedPQ[T]) Pick() T {
 	return h.pick()
 }
 
@@ -593,7 +589,7 @@ func (h *MinComparatorPQ[T]) Pick() T {
 }
 
 // Pick returns max value
-func (h *MaxPQ[T]) Pick() T {
+func (h *MaxOrderedPQ[T]) Pick() T {
 	return h.pick()
 }
 
@@ -603,7 +599,7 @@ func (h *MaxComparatorPQ[T]) Pick() T {
 }
 
 // Empty either heap is blank
-func (h *MinHeap[T]) Empty() bool {
+func (h *MinOrderedHeap[T]) Empty() bool {
 	return h.empty()
 }
 
@@ -623,7 +619,7 @@ func (h *MaxComparatorHeap[T]) Empty() bool {
 }
 
 // Empty either priority queue is blank
-func (h *MinPQ[T]) Empty() bool {
+func (h *MinOrderedPQ[T]) Empty() bool {
 	return h.empty()
 }
 
@@ -633,7 +629,7 @@ func (h *MinComparatorPQ[T]) Empty() bool {
 }
 
 // Empty either priority queue is blank
-func (h *MaxPQ[T]) Empty() bool {
+func (h *MaxOrderedPQ[T]) Empty() bool {
 	return h.empty()
 }
 
@@ -643,7 +639,7 @@ func (h *MaxComparatorPQ[T]) Empty() bool {
 }
 
 // Heapify inits heap
-func (h *MinHeap[T]) Heapify(items ...T) {
+func (h *MinOrderedHeap[T]) Heapify(items ...T) {
 	h.heapify(items...)
 }
 
@@ -663,7 +659,7 @@ func (h *MaxComparatorHeap[T]) Heapify(items ...T) {
 }
 
 // Heapify inits priority queue
-func (h *MinPQ[T]) Heapify(items ...T) {
+func (h *MinOrderedPQ[T]) Heapify(items ...T) {
 	h.heapify(items[:h.size]...)
 	for i := h.size; i < len(items); i++ {
 		if h.pick() < items[i] {
@@ -687,7 +683,7 @@ func (h *MinComparatorPQ[T]) Heapify(items ...T) {
 }
 
 // Heapify inits priority queue
-func (h *MaxPQ[T]) Heapify(items ...T) {
+func (h *MaxOrderedPQ[T]) Heapify(items ...T) {
 	h.heapify(items[:h.size]...)
 	for i := h.size; i < len(items); i++ {
 		if h.pick() > items[i] {
@@ -711,7 +707,7 @@ func (h *MaxComparatorPQ[T]) Heapify(items ...T) {
 }
 
 // Size returns heap size
-func (h *MinHeap[T]) Size() int {
+func (h *MinOrderedHeap[T]) Size() int {
 	return h.len()
 }
 
@@ -731,7 +727,7 @@ func (h *MaxComparatorHeap[T]) Size() int {
 }
 
 // Slice returns heap slice
-func (h *MinHeap[T]) Slice() []T {
+func (h *MinOrderedHeap[T]) Slice() []T {
 	res := make([]T, 0, h.Size())
 	for !h.Empty() {
 		res = append(res, h.Pop())
@@ -767,7 +763,7 @@ func (h *MaxComparatorHeap[T]) Slice() []T {
 }
 
 // Size returns priority queue size
-func (h *MinPQ[T]) Size() int {
+func (h *MinOrderedPQ[T]) Size() int {
 	return h.len()
 }
 
@@ -777,7 +773,7 @@ func (h *MinComparatorPQ[T]) Size() int {
 }
 
 // Size returns priority queue size
-func (h *MaxPQ[T]) Size() int {
+func (h *MaxOrderedPQ[T]) Size() int {
 	return h.len()
 }
 
@@ -787,7 +783,7 @@ func (h *MaxComparatorPQ[T]) Size() int {
 }
 
 // Slice return slice from PQ
-func (h *MinPQ[T]) Slice() []T {
+func (h *MinOrderedPQ[T]) Slice() []T {
 	res := make([]T, 0, h.Size())
 	for !h.Empty() {
 		res = append(res, h.Pop())
@@ -805,7 +801,7 @@ func (h *MinComparatorPQ[T]) Slice() []T {
 }
 
 // Slice return slice from PQ
-func (h *MaxPQ[T]) Slice() []T {
+func (h *MaxOrderedPQ[T]) Slice() []T {
 	res := make([]T, 0, h.Size())
 	for !h.Empty() {
 		res = append(res, h.Pop())
@@ -823,7 +819,7 @@ func (h *MaxComparatorPQ[T]) Slice() []T {
 }
 
 // OrderedSlice return ordered slice from PQ
-func (h *MinPQ[T]) OrderedSlice() []T {
+func (h *MinOrderedPQ[T]) OrderedSlice() []T {
 	if h.Empty() {
 		return make([]T, 0)
 	}
@@ -849,7 +845,7 @@ func (h *MinComparatorPQ[T]) OrderedSlice() []T {
 }
 
 // OrderedSlice return ordered slice from PQ
-func (h *MaxPQ[T]) OrderedSlice() []T {
+func (h *MaxOrderedPQ[T]) OrderedSlice() []T {
 	if h.Empty() {
 		return make([]T, 0)
 	}
