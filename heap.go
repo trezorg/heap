@@ -12,18 +12,18 @@ type Comparator[T any] interface {
 
 // baseOrderedHeap heap structure with values based on Ordered generic constraint
 type baseOrderedHeap[T constraints.Ordered] struct {
-	items    []T
-	factor   int
 	check    func(item1 T, item2 T) bool
 	getChild func(items []T, idx []int) int
+	items    []T
+	factor   int
 }
 
 // baseComparatorHeap heap structure with values based on Comparator interface
 type baseComparatorHeap[T Comparator[T]] struct {
-	items    []T
-	factor   int
 	check    func(item1 T, item2 T) bool
 	getChild func(items []T, idx []int) int
+	items    []T
+	factor   int
 }
 
 // MinOrderedHeap is heap that returns element with min priority
