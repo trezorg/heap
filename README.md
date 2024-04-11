@@ -5,8 +5,10 @@
 3. golang implementation with Comparator interface
 4. use n factor heap, priority queue implementation
 
-```golang
-h, _ := NewMaxHeap[int](5)
-```
+Examples:
+
+- [minheap](./examples/minheap.go)
+- [maxheap](./examples/maxheap.go)
+
 
 [![Actions Status](https://github.com/trezorg/heap/actions/workflows/go.yml/badge.svg)](https://github.com/trezorg/heap/actions)
