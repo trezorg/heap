@@ -1,7 +1,7 @@
 HAS_GOLANGCI := $(shell command -v golangci-lint;)
 
 test:
-	go test -v ./...
+	go test -v -count=1 ./...
 
 golangci:
 ifndef HAS_GOLANGCI
