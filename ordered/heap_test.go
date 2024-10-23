@@ -448,6 +448,12 @@ func TestMaxPQHeapify(t *testing.T) {
 	require.Panics(t, func() { h.Pop() })
 }
 
+func TestMaxPQHeapifyWithNoData(t *testing.T) {
+	h, _ := NewMaxPQ[int](3)
+	h.Heapify()
+	require.True(t, h.Empty())
+}
+
 func TestMaxPQOrderedSlice(t *testing.T) {
 	h, _ := NewMaxPQ[int](5)
 	h.Heapify(

@@ -89,3 +89,9 @@ func TestMaxComparatorPQOrderedSlice(t *testing.T) {
 
 	require.Equal(t, []Item{10, 9, 8, 7, 6}, h.OrderedSlice())
 }
+
+func TestMaxPQHeapifyWithNoData(t *testing.T) {
+	h, _ := NewMaxPQ[Item](3)
+	h.Heapify()
+	require.True(t, h.Empty())
+}

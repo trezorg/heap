@@ -1,8 +1,8 @@
-package main
+package examples
 
 import "github.com/trezorg/heap/ordered"
 
-func main() {
+func maxheap() {
 	h, _ := ordered.NewMaxHeap[string](3)
 
 	h.Push("a")

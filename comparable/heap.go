@@ -336,7 +336,7 @@ func (h *MaxHeap[T]) Heapify(items ...T) {
 
 // Heapify initializes  priority queue
 func (h *MinPQ[T]) Heapify(items ...T) {
-	h.heapify(items[:h.size]...)
+	h.heapify(items[:min(h.size, len(items))]...)
 	for i := h.size; i < len(items); i++ {
 		if h.pick().Less(items[i]) {
 			continue
@@ -348,7 +348,7 @@ func (h *MinPQ[T]) Heapify(items ...T) {
 
 // Heapify initializes priority queue
 func (h *MaxPQ[T]) Heapify(items ...T) {
-	h.heapify(items[:h.size]...)
+	h.heapify(items[:min(h.size, len(items))]...)
 	for i := h.size; i < len(items); i++ {
 		if items[i].Less(h.pick()) {
 			continue
